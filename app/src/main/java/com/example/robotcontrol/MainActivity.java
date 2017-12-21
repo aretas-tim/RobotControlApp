@@ -196,7 +196,7 @@ public class MainActivity extends AppCompatActivity {
     //The direction string will be a string representation of a number 0-255
     //there are 8 possible directions, so a binary number can be used to represent which button is pressed
     //the number will be transmitted in decimal string to save on processing on the arduino side
-    private byte direction_byte = 0b0;
+    private int direction_int = 0b0;
 
     //bit position variables
     //used in the setting an dclearing of the direction byte bits
@@ -208,6 +208,7 @@ public class MainActivity extends AppCompatActivity {
     public byte bit_5 = 5;
     public byte bit_6 = 6;
     public byte bit_7 = 7;
+
 
 
 
@@ -314,11 +315,11 @@ public class MainActivity extends AppCompatActivity {
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN ) {
                     //set the 0th bit to 1
-                    direction_byte |= (1<<bit_0);
+                    direction_int |= (1<<bit_0);
 
                 }else{
                     //clear the 0th bit to 0
-                    direction_byte &= ~(1 << bit_0);
+                    direction_int &= ~(1 << bit_0);
 
                 }
 
@@ -333,11 +334,11 @@ public class MainActivity extends AppCompatActivity {
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN ) {
                     //set the 0th bit to 1
-                    direction_byte |= (1<<bit_1);
+                    direction_int |= (1<<bit_1);
 
                 }else{
                     //clear the 0th bit to 0
-                    direction_byte &= ~(1 << bit_1);
+                    direction_int &= ~(1 << bit_1);
 
                 }
 
@@ -352,11 +353,11 @@ public class MainActivity extends AppCompatActivity {
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN ) {
                     //set the 0th bit to 1
-                    direction_byte |= (1<<bit_2);
+                    direction_int |= (1<<bit_2);
 
                 }else{
                     //clear the 0th bit to 0
-                    direction_byte &= ~(1 << bit_2);
+                    direction_int &= ~(1 << bit_2);
 
                 }
 
@@ -371,11 +372,11 @@ public class MainActivity extends AppCompatActivity {
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN ) {
                     //set the 0th bit to 1
-                    direction_byte |= (1<<bit_3);
+                    direction_int |= (1<<bit_3);
 
                 }else{
                     //clear the 0th bit to 0
-                    direction_byte &= ~(1 << bit_3);
+                    direction_int &= ~(1 << bit_3);
 
                 }
 
@@ -390,11 +391,11 @@ public class MainActivity extends AppCompatActivity {
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN ) {
                     //set the 0th bit to 1
-                    direction_byte |= (1<<bit_4);
+                    direction_int |= (1<<bit_4);
 
                 }else{
                     //clear the 0th bit to 0
-                    direction_byte &= ~(1 << bit_4);
+                    direction_int &= ~(1 << bit_4);
 
                 }
 
@@ -408,11 +409,11 @@ public class MainActivity extends AppCompatActivity {
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN ) {
                     //set the 0th bit to 1
-                    direction_byte |= (1<<bit_5);
+                    direction_int |= (1<<bit_5);
 
                 }else{
                     //clear the 0th bit to 0
-                    direction_byte &= ~(1 << bit_5);
+                    direction_int &= ~(1 << bit_5);
 
                 }
 
@@ -426,11 +427,11 @@ public class MainActivity extends AppCompatActivity {
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN ) {
                     //set the 0th bit to 1
-                    direction_byte |= (1<<bit_6);
+                    direction_int |= (1<<bit_6);
 
                 }else{
                     //clear the 0th bit to 0
-                    direction_byte &= ~(1 << bit_6);
+                    direction_int &= ~(1 << bit_6);
 
                 }
 
@@ -444,11 +445,11 @@ public class MainActivity extends AppCompatActivity {
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN ) {
                     //set the 0th bit to 1
-                    direction_byte |= (1<<bit_7);
+                    direction_int |= (1<<bit_7);
 
                 }else{
                     //clear the 0th bit to 0
-                    direction_byte &= ~(1 << bit_7);
+                    direction_int &= ~(1 << bit_7);
 
                 }
 
@@ -509,8 +510,120 @@ public class MainActivity extends AppCompatActivity {
     private Runnable repeatBTLEsend = new Runnable() {
         @Override
         public void run() {
-            // Do something here on the main thread
+
+            // the string that will hold the direction of the button pressed
+            String direction_string;
+            //the mesage string containg the direction and speed
+            String sendMessage="";
+            //the byte array that will be sent to BLE module
+            byte[] sendBytes;
+
             Log.d("Tx send Handlers", "Called on main thread");
+            switch(direction_int)
+            {
+                //only the up button is pushed
+                case 0b00000001:
+                    direction_string = "w";
+                    Log.d("Tx send Handlers", "up button is pushed");
+
+               //the up and NW buttons are pushed     //
+                case 0b00000011:
+                    direction_string ="e";
+                    Log.d("Tx send Handlers", "up and NW buttons are pushed");
+
+                    //the NW button is pushed     //
+                case 0b00000010:
+                    direction_string ="e";
+                    Log.d("Tx send Handlers", "the NW button is pushed ");
+
+                 //the NW and right buttons are pushed
+                case 0b00000110:
+                    direction_string ="e";
+                    Log.d("Tx send Handlers", "the NW and right buttons are pushed");
+
+                //the right button is pushed
+                case 0b00000100:
+                    direction_string ="d";
+                    Log.d("Tx send Handlers", "the right button is pushed");
+
+                //the right and SW buttons are pushed
+                case 0b00001100:
+                    direction_string ="c";
+                    Log.d("Tx send Handlers", "the right and SW buttons are pushed");
+
+                //the SW button is pushed
+                case 0b00001000:
+                    direction_string ="c";
+                    Log.d("Tx send Handlers", "the SW button is pushed");
+
+                //the Sw and Down buttons are pushed
+                case 0b00011000:
+                    direction_string ="c";
+                    Log.d("Tx send Handlers", "the Sw and Down buttons are pushed");
+
+                //the Down button is pushed
+                case 0b00010000:
+                    direction_string ="x";
+                    Log.d("Tx send Handlers", "the Down button is pushed");
+
+                //the SE and Down buttons are pushed
+                case 0b00110000:
+                    direction_string ="z";
+                    Log.d("Tx send Handlers", "the SE and Down buttons are pushed");
+
+                //the SE button is pushed
+                case 0b00100000:
+                    direction_string ="z";
+                    Log.d("Tx send Handlers", "the SE button is pushed");
+
+                //the SE and left buttons are pushed
+                case 0b01100000:
+                    direction_string ="z";
+                    Log.d("Tx send Handlers", "the SE and left buttons are pushed");
+
+                //the left buttons is pushed
+                case 0b01000000:
+                    direction_string ="a";
+                    Log.d("Tx send Handlers", "the left buttons is pushed");
+
+                //the NE and left buttons are pushed
+                case 0b11000000:
+                    direction_string ="q";
+                    Log.d("Tx send Handlers", "the NE and left buttons are pushed");
+
+                //the NE buttons is pushed
+                case 0b10000000:
+                    direction_string ="q";
+                    Log.d("Tx send Handlers", "the NE buttons is pushed");
+
+                //the NE and UP buttons are pushed
+                case 0b10000001:
+                    direction_string ="q";
+                    Log.d("Tx send Handlers", "the NE and UP buttons are pushed");
+
+                default:
+                    direction_string ="0";
+            }
+
+            //concatenate the direction and speed strings together to send to arduino
+            sendMessage = direction_string+","+speed_string+";";
+
+
+            //convert message to bytes and try to send it
+            try {
+                sendBytes = sendMessage.getBytes("UTF-8");
+                mService.writeRXCharacteristic(sendBytes);
+                //Update the log with time stamp
+                String currentDateTimeString = DateFormat.getTimeInstance().format(new Date());
+                Log.d("Tx send Handlers", "sending: "+sendMessage);
+            }catch(UnsupportedEncodingException e){
+
+                e.printStackTrace();
+            }catch(NullPointerException e){
+
+                Log.d(TAG,"writeRXcharacteristic threw null pointer exception. Reconnecting to bluetooth gatt");
+                mService.connect(DEVICE_ADDRESS);
+            }
             // Repeat this the same runnable code block again another 2 seconds
             // 'this' is referencing the Runnable object
             sendHandler.postDelayed(this, sendInterval);
